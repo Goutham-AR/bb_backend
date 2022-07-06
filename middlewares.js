@@ -1,3 +1,6 @@
+const {STATUS_CODES} = require("http");
+
+
 function cors(req, res, next) {
     const origin = req.headers.origin;
 
@@ -13,7 +16,10 @@ function cors(req, res, next) {
 function handleError(err, req, res, next) {
     console.error(err);
     if (res.headerSent) return next(err);
-    res.status(500).json({ error: "Internal Error" });
+    
+    const statusCode = err.statusCode || 500;
+    const errorMessage = STATUS_CODES[statusCode] || "Internal Error";
+    res.status(statusCode).json({ error: errorMessage });
 }
 
 function notFound(req, res) {
